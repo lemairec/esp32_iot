@@ -5,7 +5,7 @@
  * @date 2020-12-07
  * @copyright Copyright (c) 2020 Ryotaro Onuki
  */
-#include <VL53L1X.h>
+#include "VL53L0X.h"
 
 #include "esp_log.h"
 #define TAG "app_main"

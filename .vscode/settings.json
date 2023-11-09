@@ -1,0 +1,18 @@
+{
+    "idf.adapterTargetName": "esp32",
+    "idf.openOcdConfigs": [
+        "board/esp32-bridge.cfg"
+    ],
+    "idf.portWin": "COM10",
+    "idf.flashType": "UART",
+    "idf.port": "/dev/cu.usbserial-02B5E1DC",
+    "files.associations": {
+        "string": "c",
+        "iosfwd": "c",
+        "bitset": "c",
+        "chrono": "c",
+        "algorithm": "c",
+        "random": "c",
+        "vl53l0x_api_calibration.h": "c"
+    }
+}

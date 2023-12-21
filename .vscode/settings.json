@@ -5,7 +5,7 @@
     ],
     "idf.portWin": "COM10",
     "idf.flashType": "UART",
-    "idf.port": "/dev/cu.usbserial-02B5E1DC",
+    "idf.port": "/dev/cu.usbserial-0001",
     "files.associations": {
         "string": "c",
         "iosfwd": "c",

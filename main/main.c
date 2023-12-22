@@ -1,3 +1,110 @@
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
+#include "esp_spi_flash.h"
+
+#include "wifi.h"
+#include "common/util.h"
+
+char * version = "22.12.02";
+
+const char * company = "dizy";
+const char * balise = "test";
+
+const char *ssid = "silo_dizy";
+const char *pass = "lejard02";
+int m_nb_minutes = 1;
+
+void initIOT();
+void onEventIOT();
+
+void onEventMinute(int minute){
+    if(minute%m_nb_minutes==0){
+        onEventIOT();
+    }
+}
+
+
+int last_s = 0;
+void onEventSecond(int second){
+    int i = second - last_s;
+    if(last_s == 0 || i > 10){
+        onEventMinute(second/60);
+        last_s = second;
+    }
+}
+
+
+
+void vTaskWifi( void *pvParameters )
+{
+    wifiInit();
+    int second = 0;
+    for( ;; )
+    {
+        second++;
+        onEventSecond(second);
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+}
+
+void printInfos(){
+    lc_DebugPrint("\n");
+    lc_DebugPrint("\n");
+    lc_DebugPrint("*** infos ");
+    lc_DebugPrint("\n");
+    lc_DebugPrint("Version : ");
+    lc_DebugPrint(version);
+    lc_DebugPrint("\n");
+    lc_DebugPrint("company : ");
+    lc_DebugPrint(company);
+    lc_DebugPrint("\n");
+    lc_DebugPrint("balise : ");
+    lc_DebugPrint(balise);
+    lc_DebugPrint("\n");
+    char data[1024];
+    snprintf(data, sizeof(data), "nb minutes : %i",m_nb_minutes);
+    lc_DebugPrint(data);
+    lc_DebugPrint("\n");
+    lc_DebugPrint("wifi : ");
+    lc_DebugPrint(ssid);
+    lc_DebugPrint("\n");
+    lc_DebugPrint("pass : ");
+    lc_DebugPrint(pass);
+    lc_DebugPrint("\n");
+    
+    lc_DebugPrint("*** fin infos ");
+    lc_DebugPrint("\n");
+    lc_DebugPrint("\n");
+}
+
+
+void app_main(void)
+{
+    printInfos();
+    initIOT();
+    xTaskCreate(
+        vTaskWifi, /* Task function. */
+        "vATaskFunction", /* name of task. */
+        10000, /* Stack size of task */
+        NULL, /* parameter of the task */
+        1, /* priority of the task */
+        NULL); /* Task handle to keep track of created task */
+
+    while(true){
+        vTaskDelay(10 / portTICK_RATE_MS);
+       // verifyAlive();
+    }
+}
+
+
+/***
+ * IOT
+*/
+
+
+
 
 #include <stdio.h>
 #include "sdkconfig.h"
@@ -33,9 +140,8 @@ VL53L1_RangingMeasurementData_t rangingData;
 uint8_t dataReady = 0;
 uint16_t range;
 
-void app_main(void)
-{
 
+void initIOT(){
     if (vl53l1xInit(&dev, &i2cBus))
     {
         ESP_LOGI(TAG,"Lidar Sensor VL53L1X [OK]");
@@ -49,30 +155,31 @@ void app_main(void)
     VL53L1_StopMeasurement(&dev);
     VL53L1_SetDistanceMode(&dev, VL53L1_DISTANCEMODE_MEDIUM);
     VL53L1_SetMeasurementTimingBudgetMicroSeconds(&dev, 25000);
+}
 
-    while(1){
+void onEventIOT(){
+    VL53L1_StartMeasurement(&dev);
 
-        VL53L1_StartMeasurement(&dev);
-
-        while (dataReady == 0)
-        {
-            status = VL53L1_GetMeasurementDataReady(&dev, &dataReady);
-            vTaskDelay(pdMS_TO_TICKS(1));
-        }
-
-        status = VL53L1_GetRangingMeasurementData(&dev, &rangingData);
-        range = rangingData.RangeMilliMeter;
-
-        VL53L1_StopMeasurement(&dev);    
-
-        VL53L1_StartMeasurement(&dev);
-
-        ESP_LOGI(TAG,"Distance %d mm",range);
-
-        vTaskDelay(pdMS_TO_TICKS(1000));
-
+    while (dataReady == 0)
+    {
+        status = VL53L1_GetMeasurementDataReady(&dev, &dataReady);
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 
+    status = VL53L1_GetRangingMeasurementData(&dev, &rangingData);
+    range = rangingData.RangeMilliMeter;
 
+    VL53L1_StopMeasurement(&dev);    
 
+    VL53L1_StartMeasurement(&dev);
+
+    ESP_LOGI(TAG,"Distance %d mm",range);
+
+    //vTaskDelay(pdMS_TO_TICKS(1000));
+
+	char data[1024];
+	snprintf(data, sizeof(data), "https://www.maplaine.fr/silo/api_sonde?company=%s&balise=%s",company,balise);
+	lc_DebugPrint(data);
+	lc_DebugPrint("\n");
 }
+

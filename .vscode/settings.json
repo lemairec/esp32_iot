@@ -13,6 +13,10 @@
         "chrono": "c",
         "algorithm": "c",
         "random": "c",
-        "vl53l0x_api_calibration.h": "c"
+        "vl53l0x_api_calibration.h": "c",
+        "util.h": "c",
+        "iot.h": "c",
+        "wifi.h": "c",
+        "esp_spi_flash.h": "c"
     }
 }

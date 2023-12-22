@@ -30,3 +30,7 @@ $ idf.py flash monitor
 - [ESP-IDF Repository ](https://github.com/espressif/esp-idf)
 - [ESP-Drone Repository ](https://github.com/espressif/esp-drone)
 - [VL53L1X Full API ](https://www.st.com/en/embedded-software/stsw-img007.html)
+
+
+CONFIG_ESP_TLS_INSECURE=y
+CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=y

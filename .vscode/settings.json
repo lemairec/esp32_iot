@@ -17,6 +17,8 @@
         "util.h": "c",
         "iot.h": "c",
         "wifi.h": "c",
-        "esp_spi_flash.h": "c"
+        "esp_spi_flash.h": "c",
+        "array": "c",
+        "string_view": "c"
     }
 }

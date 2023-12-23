@@ -134,10 +134,10 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     return ESP_OK;
 }
 
-void getRest()
+void getUrl(char url_data[])
 {
     esp_http_client_config_t config_get = {
-        .url = "https://www.maplaine.fr/lemca/ping",
+        .url = url_data,
         .method = HTTP_METHOD_GET,
         .cert_pem = NULL,
         .event_handler = client_event_get_handler};

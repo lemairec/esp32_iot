@@ -29,7 +29,7 @@ void onEventMinute(int minute){
 int last_s = 0;
 void onEventSecond(int second){
     int i = second - last_s;
-    if(last_s == 0 || i > 10){
+    if(last_s == 0 || i > 60){
         onEventMinute(second/60);
         last_s = second;
     }
@@ -177,9 +177,12 @@ void onEventIOT(){
 
     //vTaskDelay(pdMS_TO_TICKS(1000));
 
-	char data[1024];
-	snprintf(data, sizeof(data), "https://www.maplaine.fr/silo/api_sonde?company=%s&balise=%s",company,balise);
-	lc_DebugPrint(data);
+	char url[1024];
+    double t1 = range/10.0;
+	snprintf(url, sizeof(url), "https://www.maplaine.fr/silo/api_sonde?company=%s&balise=%s&t1=%f",company,balise,t1);
+	lc_DebugPrint(url);
 	lc_DebugPrint("\n");
+    getUrl(url);
+    lc_DebugPrint("\n");
 }
 

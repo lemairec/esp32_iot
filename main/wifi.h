@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 extern int wifiInit();
-extern void getRest();
+extern void getUrl(char url_data[]);
 extern void postRestWifi(char post_data[]);
 extern void postRestConfigWifi(char post_data[]);
 

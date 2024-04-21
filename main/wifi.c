@@ -21,6 +21,13 @@
 #define SSID "wifi_lemaire"
 #define PASS "lejard54"
 
+const char * getSsid(){
+	return SSID;
+}
+const char * getPass(){
+	return PASS;
+}
+
 
 //#include "ping.h"
 

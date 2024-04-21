@@ -12,8 +12,6 @@ char * version = "22.12.02";
 const char * company = "dizy";
 const char * balise = "test";
 
-const char *ssid = "silo_dizy";
-const char *pass = "lejard02";
 int m_nb_minutes = 1;
 
 void initIOT();
@@ -68,10 +66,10 @@ void printInfos(){
     lc_DebugPrint(data);
     lc_DebugPrint("\n");
     lc_DebugPrint("wifi : ");
-    lc_DebugPrint(ssid);
+    lc_DebugPrint(getSsid());
     lc_DebugPrint("\n");
     lc_DebugPrint("pass : ");
-    lc_DebugPrint(pass);
+    lc_DebugPrint(getPass());
     lc_DebugPrint("\n");
     
     lc_DebugPrint("*** fin infos ");

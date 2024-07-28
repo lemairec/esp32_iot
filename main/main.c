@@ -7,30 +7,29 @@
 #include "wifi.h"
 #include "common/util.h"
 
-char * version = "22.12.02";
+char * version = "240701";
 
 const char * company = "dizy";
-const char * balise = "test";
+const char * balise = "fioul";
+
+int seconde_ev = 10;
 
 int m_nb_minutes = 1;
 
 void initIOT();
 void onEventIOT();
+void onEventConfig();
 
 void onEventMinute(int minute){
-    if(minute%m_nb_minutes==0){
+    if(minute%m_nb_minutes == 0){
         onEventIOT();
+    }
+    if(minute%m_nb_minutes*100 == 0){
+        onEventConfig();
     }
 }
 
-
-int last_s = 0;
 void onEventSecond(int second){
-    int i = second - last_s;
-    if(last_s == 0 || i > 60){
-        onEventMinute(second/60);
-        last_s = second;
-    }
 }
 
 
@@ -41,8 +40,11 @@ void vTaskWifi( void *pvParameters )
     int second = 0;
     for( ;; )
     {
-        second++;
         onEventSecond(second);
+        if(second%60 == 0){
+            onEventMinute(second/60);
+        }
+        second++;
         vTaskDelay(1000 / portTICK_RATE_MS);
     }
 }
@@ -155,7 +157,7 @@ void initIOT(){
     VL53L1_SetMeasurementTimingBudgetMicroSeconds(&dev, 25000);
 }
 
-void onEventIOT(){
+void onEventDistance(){
     VL53L1_StartMeasurement(&dev);
 
     while (dataReady == 0)
@@ -173,14 +175,21 @@ void onEventIOT(){
 
     ESP_LOGI(TAG,"Distance %d mm",range);
 
-    //vTaskDelay(pdMS_TO_TICKS(1000));
-
 	char url[1024];
     double t1 = range/10.0;
 	snprintf(url, sizeof(url), "https://www.maplaine.fr/silo/api_sonde?company=%s&balise=%s&t1=%f",company,balise,t1);
+	getUrl(url);
+}
+
+void onEventIOT(){
+    onEventDistance();
+}
+
+void onEventConfig(){
+	snprintf(url, sizeof(url), "https://www.maplaine.fr/silo/api_sonde_config?company=%s&balise=%s&config=%s",company,balise,version);
 	lc_DebugPrint(url);
 	lc_DebugPrint("\n");
-    getUrl(url);
+    //getUrl(url);
     lc_DebugPrint("\n");
 }
 

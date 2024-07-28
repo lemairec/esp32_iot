@@ -18,7 +18,7 @@
 
 #include "esp_http_client.h"
 
-#define SSID "wifi_lemaire"
+#define SSID "Livebox-lemaire"
 #define PASS "lejard54"
 
 const char * getSsid(){

@@ -21,6 +21,9 @@
 #define SSID "Livebox-lemaire"
 #define PASS "lejard54"
 
+#define SSID "ferme_lemaire"
+#define PASS "lejard02"
+
 const char * getSsid(){
 	return SSID;
 }

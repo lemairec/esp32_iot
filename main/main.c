@@ -17,6 +17,7 @@ int seconde_ev = 10;
 int m_nb_minutes = 1;
 
 void initIOT();
+void testIOT();
 void onEventIOT();
 void onEventConfig();
 
@@ -42,7 +43,9 @@ void vTaskWifi( void *pvParameters )
     {
         onEventSecond(second);
         if(second%60 == 0){
-            onEventMinute(second/60);
+            int minute = second/60;
+            lc_DebugPrint("minute %i\n", minute);
+            onEventMinute(minute);
         }
         second++;
         vTaskDelay(1000 / portTICK_RATE_MS);
@@ -84,6 +87,7 @@ void app_main(void)
 {
     printInfos();
     initIOT();
+    testIOT();
     xTaskCreate(
         vTaskWifi, /* Task function. */
         "vATaskFunction", /* name of task. */
@@ -157,6 +161,31 @@ void initIOT(){
     VL53L1_SetMeasurementTimingBudgetMicroSeconds(&dev, 25000);
 }
 
+
+
+/*
+    DISTANCE
+*/
+void testDistance(){
+    VL53L1_StartMeasurement(&dev);
+
+    while (dataReady == 0)
+    {
+        status = VL53L1_GetMeasurementDataReady(&dev, &dataReady);
+        vTaskDelay(pdMS_TO_TICKS(1));
+        ESP_LOGI(TAG,"e");
+    }
+
+    status = VL53L1_GetRangingMeasurementData(&dev, &rangingData);
+    range = rangingData.RangeMilliMeter;
+
+    VL53L1_StopMeasurement(&dev);    
+
+    VL53L1_StartMeasurement(&dev);
+
+    ESP_LOGI(TAG,"Distance %d mm",range);
+}
+
 void onEventDistance(){
     VL53L1_StartMeasurement(&dev);
 
@@ -164,6 +193,7 @@ void onEventDistance(){
     {
         status = VL53L1_GetMeasurementDataReady(&dev, &dataReady);
         vTaskDelay(pdMS_TO_TICKS(1));
+        ESP_LOGI(TAG,"error");
     }
 
     status = VL53L1_GetRangingMeasurementData(&dev, &rangingData);
@@ -185,8 +215,15 @@ void onEventIOT(){
     onEventDistance();
 }
 
+void testIOT(){
+    lc_DebugPrint("*** testDistance\n");
+    testDistance();
+    lc_DebugPrint("*** fin testDistance\n");
+}
+
 void onEventConfig(){
-	snprintf(url, sizeof(url), "https://www.maplaine.fr/silo/api_sonde_config?company=%s&balise=%s&config=%s",company,balise,version);
+	char url[1024];
+    snprintf(url, sizeof(url), "https://www.maplaine.fr/silo/api_sonde_config?company=%s&balise=%s&config=%s",company,balise,version);
 	lc_DebugPrint(url);
 	lc_DebugPrint("\n");
     //getUrl(url);

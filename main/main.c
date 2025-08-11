@@ -10,7 +10,7 @@
 char * version = "240701";
 
 const char * company = "dizy";
-const char * balise = "fioul";
+const char * balise = "gnr";
 
 int seconde_ev = 10;
 
@@ -19,14 +19,10 @@ int m_nb_minutes = 1;
 void initIOT();
 void testIOT();
 void onEventIOT();
-void onEventConfig();
 
 void onEventMinute(int minute){
     if(minute%m_nb_minutes == 0){
         onEventIOT();
-    }
-    if(minute%m_nb_minutes*100 == 0){
-        onEventConfig();
     }
 }
 
@@ -152,7 +148,7 @@ void initIOT(){
     }
     else
     {
-        ESP_LOGI(TAG,"Lidar Sensor VL53L1X [FAIL]");
+        ESP_LOGE(TAG,"Lidar Sensor VL53L1X [FAIL]");
         return;
     }
 
@@ -173,7 +169,7 @@ void testDistance(){
     {
         status = VL53L1_GetMeasurementDataReady(&dev, &dataReady);
         vTaskDelay(pdMS_TO_TICKS(1));
-        ESP_LOGI(TAG,"e");
+        //ESP_LOGI(TAG,"e");
     }
 
     status = VL53L1_GetRangingMeasurementData(&dev, &rangingData);
@@ -220,13 +216,3 @@ void testIOT(){
     testDistance();
     lc_DebugPrint("*** fin testDistance\n");
 }
-
-void onEventConfig(){
-	char url[1024];
-    snprintf(url, sizeof(url), "https://www.maplaine.fr/silo/api_sonde_config?company=%s&balise=%s&config=%s",company,balise,version);
-	lc_DebugPrint(url);
-	lc_DebugPrint("\n");
-    //getUrl(url);
-    lc_DebugPrint("\n");
-}
-

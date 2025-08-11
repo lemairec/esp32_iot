@@ -5,7 +5,7 @@
     ],
     "idf.portWin": "COM10",
     "idf.flashType": "UART",
-    "idf.port": "/dev/cu.usbserial-0001",
+    "idf.port": "/dev/tty.usbserial-0001",
     "files.associations": {
         "string": "c",
         "iosfwd": "c",
@@ -19,6 +19,8 @@
         "wifi.h": "c",
         "esp_spi_flash.h": "c",
         "array": "c",
-        "string_view": "c"
+        "string_view": "c",
+        "memory": "c",
+        "utility": "c"
     }
 }
